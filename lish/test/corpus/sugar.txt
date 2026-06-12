@@ -1,0 +1,89 @@
+===================================
+list literal
+===================================
+
+list 1 2 3
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (number)
+    argument: (number)
+    argument: (number)))
+
+===================================
+list sugar in argument position
+===================================
+
+map x [1 2 3] (* :x 2)
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (identifier)
+    argument: (list
+      (number)
+      (number)
+      (number))
+    argument: (sub_expression
+      (expression
+        operation: (identifier)
+        argument: (scope_ref
+          (identifier))
+        argument: (number)))))
+
+===================================
+block sugar
+===================================
+
+if (> :x 0) {(say "positive")} {(say "non-positive")}
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (sub_expression
+      (expression
+        operation: (identifier)
+        argument: (scope_ref
+          (identifier))
+        argument: (number)))
+    argument: (block
+      (sub_expression
+        (expression
+          operation: (identifier)
+          argument: (string
+            (string_content)))))
+    argument: (block
+      (sub_expression
+        (expression
+          operation: (identifier)
+          argument: (string
+            (string_content)))))))
+
+===================================
+single-term call ($name)
+===================================
+
+if (is :x 0) $none $some
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (sub_expression
+      (expression
+        operation: (identifier)
+        argument: (scope_ref
+          (identifier))
+        argument: (number)))
+    argument: (single_term_call
+      (identifier))
+    argument: (single_term_call
+      (identifier))))

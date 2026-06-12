@@ -1,0 +1,49 @@
+===================================
+double-quoted string
+===================================
+
+say "hello"
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (string
+      (string_content))))
+
+===================================
+single-quoted string
+===================================
+
+say 'hello world'
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (string
+      (string_content))))
+
+===================================
+string with escape sequences
+===================================
+
+say "a\nb\tc\\d\"e"
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (string
+      (string_content)
+      (escape_sequence)
+      (string_content)
+      (escape_sequence)
+      (string_content)
+      (escape_sequence)
+      (string_content)
+      (escape_sequence)
+      (string_content))))

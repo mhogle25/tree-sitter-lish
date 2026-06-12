@@ -1,0 +1,86 @@
+===================================
+simple bare expression
+===================================
+
++ 1 2
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (number)
+    argument: (number)))
+
+===================================
+nested sub-expression
+===================================
+
++ 1 (* 2 3)
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (number)
+    argument: (sub_expression
+      (expression
+        operation: (identifier)
+        argument: (number)
+        argument: (number)))))
+
+===================================
+paren-wrapped at top level
+===================================
+
+(+ 1 2)
+
+---
+
+(source_file
+  (sub_expression
+    (expression
+      operation: (identifier)
+      argument: (number)
+      argument: (number))))
+
+===================================
+zero-argument expression (bare identifier)
+===================================
+
+foo
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)))
+
+===================================
+negative number argument
+===================================
+
++ -1 2
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (number)
+    argument: (number)))
+
+===================================
+float literals
+===================================
+
++ 1.5 2.0
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (number)
+    argument: (number)))

@@ -1,0 +1,160 @@
+===================================
+single macro definition
+===================================
+
+|greet name| say (concat "hello, " :name)
+
+---
+
+(source_file
+  (macro_definition
+    name: (identifier)
+    param: (identifier)
+    body: (macro_body)))
+
+===================================
+multiple macros on separate lines
+===================================
+
+|double x| * :x 2
+|triple x| * :x 3
+
+---
+
+(source_file
+  (macro_definition
+    name: (identifier)
+    param: (identifier)
+    body: (macro_body))
+  (macro_definition
+    name: (identifier)
+    param: (identifier)
+    body: (macro_body)))
+
+===================================
+macro with deferred parameter
+===================================
+
+|defer ~body| body :body
+
+---
+
+(source_file
+  (macro_definition
+    name: (identifier)
+    param: (deferred_param
+      (identifier))
+    body: (macro_body)))
+
+===================================
+zero-parameter macro
+===================================
+
+|pi| proc 3.141592653589793
+
+---
+
+(source_file
+  (macro_definition
+    name: (identifier)
+    body: (macro_body)))
+
+===================================
+macro with multiple parameters
+===================================
+
+|clamp v lo hi| min :hi (max :lo :v)
+
+---
+
+(source_file
+  (macro_definition
+    name: (identifier)
+    param: (identifier)
+    param: (identifier)
+    param: (identifier)
+    body: (macro_body)))
+
+===================================
+leading comment before the first macro
+===================================
+
+## the doubling macro
+|double x| * :x 2
+
+---
+
+(source_file
+  (comment)
+  (macro_definition
+    name: (identifier)
+    param: (identifier)
+    body: (macro_body)))
+
+===================================
+doc comments between macros surface as separate nodes
+===================================
+
+## the doubling macro
+|double x| * :x 2
+
+## the tripling macro
+|triple x| * :x 3
+
+---
+
+(source_file
+  (comment)
+  (macro_definition
+    name: (identifier)
+    param: (identifier)
+    body: (macro_body))
+  (comment)
+  (macro_definition
+    name: (identifier)
+    param: (identifier)
+    body: (macro_body)))
+
+===================================
+inline comment containing pipe stays inside the body
+===================================
+
+|foo x| * :x ## use | here ## 2
+
+---
+
+(source_file
+  (macro_definition
+    name: (identifier)
+    param: (identifier)
+    body: (macro_body)))
+
+===================================
+body containing a pipe character in a string
+===================================
+
+|sep| split "|" :s
+
+---
+
+(source_file
+  (macro_definition
+    name: (identifier)
+    body: (macro_body)))
+
+===================================
+multi-line macro body
+===================================
+
+|clamp v lo hi|
+   min :hi (max :lo :v)
+
+---
+
+(source_file
+  (macro_definition
+    name: (identifier)
+    param: (identifier)
+    param: (identifier)
+    param: (identifier)
+    body: (macro_body)))

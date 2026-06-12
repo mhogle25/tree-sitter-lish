@@ -1,0 +1,29 @@
+// ---------------------------------------------------------------------------
+// Cross-language sync contract.
+//
+// This file mirrors character constants from the upstream lish source:
+//
+//   lish-zig/src/token.zig
+//
+// If you change a value here, also update the Zig source. The sync is enforced
+// by test/constants-sync.test.js, which text-parses both files and compares.
+// ---------------------------------------------------------------------------
+
+module.exports = {
+    EXPRESSION_SINGLE: '$',
+    SCOPE_THUNK:       ':',
+    EXPRESSION_OPEN:   '(',
+    EXPRESSION_CLOSE:  ')',
+    LIST_OPEN:         '[',
+    LIST_CLOSE:        ']',
+    BLOCK_OPEN:        '{',
+    BLOCK_CLOSE:       '}',
+    QUOTE_DOUBLE:      '"',
+    QUOTE_SINGLE:      "'",
+    MACRO_BRACKET:     '|',
+    DEFERRED:          '~',
+    DECIMAL_POINT:     '.',
+    NEGATIVE_SIGN:     '-',
+    COMMENT:           '#',
+    BACKSLASH:         '\\',
+};

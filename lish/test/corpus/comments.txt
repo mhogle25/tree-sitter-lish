@@ -1,0 +1,51 @@
+===================================
+to-end-of-line comment alone
+===================================
+
+## just a comment
+
+---
+
+(source_file
+  (comment))
+
+===================================
+to-end-of-line comment after expression
+===================================
+
++ 1 2 ## sum of one and two
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (number)
+    argument: (number))
+  (comment))
+
+===================================
+inline comment between args
+===================================
+
++ 1 ## inline ## 2
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (number)
+    (comment)
+    argument: (number)))
+
+===================================
+bare delimited comment
+===================================
+
+##empty##
+
+---
+
+(source_file
+  (comment))

@@ -1,0 +1,7 @@
+{
+  "name": "tree-sitter-lish-expressions",
+  "version": "0.0.1",
+  "description": "tree-sitter grammar for .lish expression files",
+  "main": "grammar.js",
+  "license": "MIT"
+}

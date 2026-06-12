@@ -1,0 +1,26 @@
+{
+  "grammars": [
+    {
+      "name": "lish",
+      "scope": "source.lish",
+      "path": "lish",
+      "file-types": ["lish"],
+      "injection-regex": "^lish$"
+    },
+    {
+      "name": "lishmacro",
+      "scope": "source.lishmacro",
+      "path": "lishmacro",
+      "file-types": ["lishmacro"],
+      "injection-regex": "^lishmacro$"
+    }
+  ],
+  "metadata": {
+    "version": "0.0.1",
+    "license": "MIT",
+    "description": "tree-sitter grammars for the lish language",
+    "links": {
+      "repository": "https://github.com/mhogle25/tree-sitter-lish"
+    }
+  }
+}

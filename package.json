@@ -1,0 +1,29 @@
+{
+  "name": "tree-sitter-lish",
+  "version": "0.0.1",
+  "description": "tree-sitter grammars for the lish language (.lish expressions and .lishmacro macro modules)",
+  "keywords": ["tree-sitter", "parser", "lish"],
+  "license": "MIT",
+  "scripts": {
+    "generate": "cd lish && tree-sitter generate && cd ../lishmacro && tree-sitter generate",
+    "test": "cd lish && tree-sitter test && cd ../lishmacro && tree-sitter test && cd .. && node test/constants-sync.test.js"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.24.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["tree-sitter-cli"]
+  },
+  "files": [
+    "common/**",
+    "lish/grammar.js",
+    "lish/package.json",
+    "lish/src/**",
+    "lish/queries/**",
+    "lishmacro/grammar.js",
+    "lishmacro/package.json",
+    "lishmacro/src/**",
+    "lishmacro/queries/**",
+    "tree-sitter.json"
+  ]
+}
