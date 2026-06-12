@@ -8,6 +8,30 @@
  *
  * Character literals come from `common/constants.js`, which mirrors lish-zig's
  * `token.zig`. See that file's header for the sync contract.
+ *
+ * ---
+ * Cross-language sync — token-level regexes.
+ *
+ * The token regexes in this file (`number`, `identifier`, `escape_sequence`,
+ * `comment`) duplicate the lexical rules of lish-zig's `src/lexer.zig`. They
+ * are NOT generated; if you change them here you must also change the Zig
+ * lexer (or vice versa), and your CI will need to catch the divergence.
+ *
+ * The contracts holding these in sync are:
+ *
+ *   - `lish-zig/src/scanner_corpus/` — boundary-finding cases run by every
+ *     embedder. Catches drift in string + comment + escape handling.
+ *   - `tree-sitter-lish/test/scanner-corpus.test.js` — runs the corpus
+ *     against this grammar's external scanner.
+ *   - `tree-sitter-lish/test/constants-sync.test.js` — character constants.
+ *   - (Pending) escape character class sync test — matches `escape_sequence`'s
+ *     character class against `token.zig`'s `escSymToChar` switch.
+ *
+ * TODO: when lish-zig exposes `lish_find_expression_boundary` as a shared C
+ * ABI (see roadmap "Lish embedders" section), `comment` and `escape_sequence`
+ * become redundant because boundary finding is done by the shared function.
+ * `number` and `identifier` remain hand-mirrored regexes; their drift would
+ * still be detected by the corpus.
  */
 
 const C = require('./constants');
