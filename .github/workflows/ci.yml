@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: tree-sitter-lish
+    runs-on: ubuntu-latest
+    steps:
+      # The grammar vendors generated constants/escapes from lish-zig via
+      # scripts/sync.js, which runs `zig build gen` in a local source. Check
+      # lish-zig out as a sibling and point LISH_SOURCE at it.
+      - name: Checkout tree-sitter-lish
+        uses: actions/checkout@v4
+        with:
+          path: tree-sitter-lish
+      - name: Checkout lish-zig
+        uses: actions/checkout@v4
+        with:
+          repository: mhogle25/lish-zig
+          path: lish-zig
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: install, generate, test
+        working-directory: tree-sitter-lish
+        env:
+          LISH_SOURCE: ${{ github.workspace }}/lish-zig
+        run: |
+          pnpm install
+          pnpm run generate
+          pnpm test
