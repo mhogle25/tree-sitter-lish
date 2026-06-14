@@ -5,8 +5,11 @@
   "keywords": ["tree-sitter", "parser", "lish"],
   "license": "MIT",
   "scripts": {
+    "sync": "node scripts/sync.js",
+    "postinstall": "node scripts/sync.js --soft",
+    "pregenerate": "node scripts/sync.js",
     "generate": "cd lish && tree-sitter generate && cd ../lishmacro && tree-sitter generate",
-    "test": "cd lish && tree-sitter test && cd ../lishmacro && tree-sitter test && cd .. && node test/constants-sync.test.js && node test/escape-sync.test.js && node test/scanner-corpus.test.js"
+    "test": "cd lish && tree-sitter test && cd ../lishmacro && tree-sitter test && cd .. && node test/scanner-corpus.test.js"
   },
   "devDependencies": {
     "tree-sitter-cli": "^0.24.0"
@@ -16,6 +19,7 @@
   },
   "files": [
     "common/**",
+    "scripts/**",
     "lish/grammar.js",
     "lish/package.json",
     "lish/src/**",

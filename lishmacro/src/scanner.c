@@ -11,8 +11,9 @@
 // common/scanner_helpers.h — this file just composes those primitives with
 // the lishmacro-specific terminator logic.
 //
-// TODO: when we add a shared `lish_find_expression_boundary` C ABI to lish-zig
-// (see roadmap "lish embedders" section), this scanner shrinks to one call.
+// NOTE: lish-zig has a shared boundary finder (`boundary.zig`), but a streaming
+// tree-sitter scanner can't call it (no buffer; ships as C/WASM, can't link
+// Zig). This scanner keeps its own scan by design, held to the shared corpus.
 
 #include "tree_sitter/parser.h"
 #include "../../common/constants.h"

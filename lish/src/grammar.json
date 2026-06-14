@@ -299,7 +299,7 @@
       "type": "IMMEDIATE_TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "\\\\([\"'\\\\nrtab0aefv]|x[0-9a-fA-F]{2}|u\\{[0-9a-fA-F]+\\})"
+        "value": "\\\\(?:[\"'0\\\\abefnrtv]|x[0-9a-fA-F]{2}|u\\{[0-9a-fA-F]+\\})"
       }
     },
     "identifier": {

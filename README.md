@@ -16,8 +16,9 @@ tree-sitter-lish/
 ├── tree-sitter.json          # grammars array — declares both grammars
 ├── package.json              # npm scripts: generate, test
 ├── common/
-│   ├── constants.js          # character constants mirrored from lish-zig/src/token.zig
-│   ├── constants.h           # C mirror used by external scanners
+│   ├── constants.js          # GENERATED from lish-zig/src/token.zig (via sync.js)
+│   ├── constants.h           # GENERATED — C form for external scanners
+│   ├── escapes.js            # GENERATED — string-escape symbol set
 │   └── define-grammar.js     # the lish expression grammar (used only by `lish/`)
 ├── lish/
 │   ├── grammar.js            # 1-line shim → define-grammar()
@@ -30,8 +31,10 @@ tree-sitter-lish/
 │   │   ├── highlights.scm    # highlights only the header shell
 │   │   └── injections.scm    # delegates `macro_body` content to the `lish` grammar
 │   └── test/corpus/*.txt
+├── scripts/
+│   └── sync.js                 # vendors generated constants/escapes from lish-zig
 └── test/
-    └── constants-sync.test.js  # enforces token.zig ↔ constants.js ↔ constants.h
+    └── scanner-corpus.test.js  # runs the shared boundary corpus vs the scanner
 ```
 
 ## Build
@@ -39,7 +42,7 @@ tree-sitter-lish/
 ```sh
 pnpm install              # gets the tree-sitter CLI as a devDependency
 pnpm generate             # produces lish/src/parser.c and lishmacro/src/parser.c
-pnpm test                 # runs both grammars' corpus tests + the constants sync test
+pnpm test                 # runs both grammars' corpus tests + the scanner corpus test
 ```
 
 `npm` and `yarn` work equivalently; `pnpm` is what the repo was developed against.
@@ -59,13 +62,19 @@ The two highlighters are kept aligned by sharing the lish-zig source-of-truth (s
 
 ## Cross-language sync
 
-The character constants (`$`, `:`, `(`, `[`, `|`, `~`, ...) live in three files, one per consumer:
+The character constants (`$`, `:`, `(`, `[`, `|`, `~`, ...) and the string-escape
+set have one source — `lish-zig/src/token.zig` — and are **generated**, not
+hand-mirrored:
 
 1. `lish-zig/src/token.zig` — Zig source of truth (used by the lish parser, lexer, highlighter, REPL).
-2. `tree-sitter-lish/common/constants.js` — JS mirror (used by `define-grammar.js` and `lishmacro/grammar.js`).
-3. `tree-sitter-lish/common/constants.h` — C mirror (used by `lishmacro/src/scanner.c` and any future external scanners).
+2. `lish-zig` emits `constants.js`, `constants.h`, `escapes.js` via `zig build gen`.
+3. `scripts/sync.js` vendors those into `common/` (run automatically by the `pregenerate` / `postinstall` npm hooks; point it at a local lish-zig with `LISH_SOURCE` or `.lishsource.json`).
 
-`tree-sitter-lish/test/constants-sync.test.js` text-parses all three and asserts they agree. If you change one and forget the others, CI fails until they're aligned. Each file has a header comment naming the contract.
+So `common/constants.{js,h}` and `common/escapes.js` carry a "DO NOT EDIT" header
+and can't drift — change `token.zig` and re-sync. The remaining hand-written
+lexical bits (the `number`/`identifier` regexes, the external scanner's string/
+comment skipping) are held to `lish-zig/src/scanner_corpus/` by
+`test/scanner-corpus.test.js`.
 
 ## Editor integration
 

@@ -8,16 +8,16 @@
 // Any function in this header that mirrors lish lexer logic is part of the
 // boundary-finding contract documented at:
 //
-//   lish-zig/test/scanner_corpus/
+//   lish-zig/src/scanner_corpus/
 //
 // If lish gains a new lexical form, the corpus grows, every embedder's CI
 // fails until they learn the new form.
 //
-// TODO: eventually replace these duplicated helpers with calls into a shared
-// C ABI function exported by lish-zig (e.g. `lish_find_expression_boundary`).
-// That would make lish-zig the single source of truth for lexical boundary
-// finding, removing the drift risk entirely. See lish-zig roadmap, "lish
-// embedders" section, for the case for / against and the prerequisites.
+// NOTE: lish-zig has a shared boundary finder (`boundary.zig`), and Zig
+// embedders call it directly. A tree-sitter scanner cannot: it reads input one
+// codepoint at a time (no buffer to pass) and ships as portable C/WASM (can't
+// link Zig). So these streaming helpers stay, held to the same corpus. This is
+// by design, not a gap to close. See lish-zig roadmap, "lish embedders".
 // ---------------------------------------------------------------------------
 
 #ifndef LISH_TREE_SITTER_SCANNER_HELPERS_H

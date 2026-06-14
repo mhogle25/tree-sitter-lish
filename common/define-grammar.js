@@ -6,35 +6,46 @@
  * tree-sitter injection to delegate body parsing to the `lish` grammar at the
  * editor level. See lishmacro/grammar.js + lishmacro/src/scanner.c.
  *
- * Character literals come from `common/constants.js`, which mirrors lish-zig's
- * `token.zig`. See that file's header for the sync contract.
+ * Character literals come from `common/constants.js`, which is generated from
+ * lish-zig's `token.zig` (via `tools/gen.zig`) and vendored in by `scripts/sync.js`.
+ * Run `pnpm sync` to refresh it; do not edit it by hand.
  *
  * ---
  * Cross-language sync — token-level regexes.
  *
- * The token regexes in this file (`number`, `identifier`, `escape_sequence`,
- * `comment`) duplicate the lexical rules of lish-zig's `src/lexer.zig`. They
- * are NOT generated; if you change them here you must also change the Zig
- * lexer (or vice versa), and your CI will need to catch the divergence.
+ * The `number`, `identifier`, and `comment` regexes duplicate the lexical rules
+ * of lish-zig's `src/lexer.zig`. They are NOT generated; if you change them here
+ * you must also change the Zig lexer (or vice versa), and your CI will need to
+ * catch the divergence.
  *
- * The contracts holding these in sync are:
+ * `escape_sequence`'s single-char class is the exception: it is built from
+ * `common/escapes.js`, generated from `token.zig`'s `escSymToChar` and vendored
+ * by `scripts/sync.js`, so it cannot drift. The `\xAB` / `\u{...}` forms are
+ * tree-sitter-side extensions and stay hand-written here.
+ *
+ * The contracts holding the remaining hand-mirrored regexes in sync are:
  *
  *   - `lish-zig/src/scanner_corpus/` — boundary-finding cases run by every
  *     embedder. Catches drift in string + comment + escape handling.
  *   - `tree-sitter-lish/test/scanner-corpus.test.js` — runs the corpus
  *     against this grammar's external scanner.
- *   - `tree-sitter-lish/test/constants-sync.test.js` — character constants.
- *   - (Pending) escape character class sync test — matches `escape_sequence`'s
- *     character class against `token.zig`'s `escSymToChar` switch.
  *
- * TODO: when lish-zig exposes `lish_find_expression_boundary` as a shared C
- * ABI (see roadmap "Lish embedders" section), `comment` and `escape_sequence`
- * become redundant because boundary finding is done by the shared function.
- * `number` and `identifier` remain hand-mirrored regexes; their drift would
- * still be detected by the corpus.
+ * NOTE: lish-zig has a shared boundary finder (`boundary.zig`), but this
+ * grammar's external scanner can't call it (streaming, ships as C/WASM, can't
+ * link Zig). So `comment` and the `number` / `identifier` regexes stay
+ * hand-mirrored, with the corpus catching string/comment/escape drift. This is
+ * by design; see lish-zig roadmap, "Lish embedders".
  */
 
 const C = require('./constants');
+const E = require('./escapes');
+
+// Regex character-class body from raw chars, escaping the few that are special
+// inside a `[...]` class.
+function charClass(chars) {
+    const body = chars.map(c => /[\\\]^-]/.test(c) ? '\\' + c : c).join('');
+    return '[' + body + ']';
+}
 
 module.exports = function defineLishGrammar() {
     return grammar({
@@ -116,8 +127,11 @@ module.exports = function defineLishGrammar() {
             _string_content_double: $ => token.immediate(prec(1, /[^"\\]+/)),
             _string_content_single: $ => token.immediate(prec(1, /[^'\\]+/)),
 
+            // Single-char class comes from the generated escapes.js (mirrors
+            // token.zig's escSymToChar). The hex / Unicode forms are
+            // tree-sitter-side extensions and stay hand-written.
             escape_sequence: $ => token.immediate(
-                /\\(["'\\nrtab0aefv]|x[0-9a-fA-F]{2}|u\{[0-9a-fA-F]+\})/,
+                new RegExp('\\\\(?:' + charClass(E.SINGLE_CHAR_ESCAPES) + '|x[0-9a-fA-F]{2}|u\\{[0-9a-fA-F]+\\})'),
             ),
 
             // Identifier: any run of non-structural characters. Lish ops like
