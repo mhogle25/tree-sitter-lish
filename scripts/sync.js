@@ -2,13 +2,13 @@
 // ---------------------------------------------------------------------------
 // Vendors lish's generated cross-language artifacts into common/.
 //
-// lish-zig owns the source of truth (src/token.zig) and emits the mirrors this
+// lish owns the source of truth (src/token.zig) and emits the mirrors this
 // grammar consumes (constants.js, constants.h) via `zig build gen`. This script
 // pulls those generated files in so the grammar never hand-mirrors lish's
 // character constants.
 //
 // Source resolution precedence:
-//   1. LISH_SOURCE env var          path to a lish-zig checkout
+//   1. LISH_SOURCE env var          path to a lish checkout
 //   2. .lishsource.json { "path" }  relative to this repo's root
 //   3. error                        (downgraded to a warning under --soft)
 //

@@ -1,23 +1,23 @@
 // ---------------------------------------------------------------------------
 // Shared scanner primitives for tree-sitter grammars that wrap lish syntax.
 //
-// Mirrors the boundary-skipping behavior of lish-zig's lexer so that
+// Mirrors the boundary-skipping behavior of lish's lexer so that
 // wrapper-grammar scanners (lishmacro, future folio) find the same byte
 // boundaries the lish parser would.
 //
 // Any function in this header that mirrors lish lexer logic is part of the
 // boundary-finding contract documented at:
 //
-//   lish-zig/src/scanner_corpus/
+//   lish/src/scanner_corpus/
 //
 // If lish gains a new lexical form, the corpus grows, every embedder's CI
 // fails until they learn the new form.
 //
-// NOTE: lish-zig has a shared boundary finder (`boundary.zig`), and Zig
+// NOTE: lish has a shared boundary finder (`boundary.zig`), and Zig
 // embedders call it directly. A tree-sitter scanner cannot: it reads input one
 // codepoint at a time (no buffer to pass) and ships as portable C/WASM (can't
 // link Zig). So these streaming helpers stay, held to the same corpus. This is
-// by design, not a gap to close. See lish-zig roadmap, "lish embedders".
+// by design, not a gap to close. See lish roadmap, "lish embedders".
 // ---------------------------------------------------------------------------
 
 #ifndef LISH_TREE_SITTER_SCANNER_HELPERS_H
@@ -66,7 +66,7 @@ static inline void lish_skip_string(TSLexer *lexer, int32_t quote) {
 //   - a matching `##`  (inline form)
 //   - a newline        (to-EOL form)
 //   - EOF
-// Mirrors lish-zig/src/lexer.zig's comment handling.
+// Mirrors lish/src/lexer.zig's comment handling.
 static inline void lish_skip_comment(TSLexer *lexer) {
     while (!lexer->eof(lexer)) {
         int32_t c = lexer->lookahead;

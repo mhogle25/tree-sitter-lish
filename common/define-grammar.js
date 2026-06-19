@@ -7,14 +7,14 @@
  * editor level. See lishmacro/grammar.js + lishmacro/src/scanner.c.
  *
  * Character literals come from `common/constants.js`, which is generated from
- * lish-zig's `token.zig` (via `tools/gen.zig`) and vendored in by `scripts/sync.js`.
+ * lish's `token.zig` (via `tools/gen.zig`) and vendored in by `scripts/sync.js`.
  * Run `pnpm sync` to refresh it; do not edit it by hand.
  *
  * ---
  * Cross-language sync — token-level regexes.
  *
  * The `number`, `identifier`, and `comment` regexes duplicate the lexical rules
- * of lish-zig's `src/lexer.zig`. They are NOT generated; if you change them here
+ * of lish's `src/lexer.zig`. They are NOT generated; if you change them here
  * you must also change the Zig lexer (or vice versa), and your CI will need to
  * catch the divergence.
  *
@@ -25,16 +25,16 @@
  *
  * The contracts holding the remaining hand-mirrored regexes in sync are:
  *
- *   - `lish-zig/src/scanner_corpus/` — boundary-finding cases run by every
+ *   - `lish/src/scanner_corpus/` — boundary-finding cases run by every
  *     embedder. Catches drift in string + comment + escape handling.
  *   - `tree-sitter-lish/test/scanner-corpus.test.js` — runs the corpus
  *     against this grammar's external scanner.
  *
- * NOTE: lish-zig has a shared boundary finder (`boundary.zig`), but this
+ * NOTE: lish has a shared boundary finder (`boundary.zig`), but this
  * grammar's external scanner can't call it (streaming, ships as C/WASM, can't
  * link Zig). So `comment` and the `number` / `identifier` regexes stay
  * hand-mirrored, with the corpus catching string/comment/escape drift. This is
- * by design; see lish-zig roadmap, "Lish embedders".
+ * by design; see lish roadmap, "Lish embedders".
  */
 
 const C = require('./constants');

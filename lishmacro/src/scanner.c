@@ -4,14 +4,14 @@
 // of a macro header, advances through arbitrary content until the next
 // top-level `|` (i.e. not inside a string or comment) or EOF.
 //
-// Mirrors the boundary logic in lish-zig/src/macro_parser.zig's
+// Mirrors the boundary logic in lish/src/macro_parser.zig's
 // `parseFromLexer(..., stop_at: &.{.macro_bracket})` and the comment/string
-// handling in lish-zig/src/lexer.zig. All the lish-specific lexical knowledge
+// handling in lish/src/lexer.zig. All the lish-specific lexical knowledge
 // (what's a string, what's a comment, where escape sequences are) lives in
 // common/scanner_helpers.h — this file just composes those primitives with
 // the lishmacro-specific terminator logic.
 //
-// NOTE: lish-zig has a shared boundary finder (`boundary.zig`), but a streaming
+// NOTE: lish has a shared boundary finder (`boundary.zig`), but a streaming
 // tree-sitter scanner can't call it (no buffer; ships as C/WASM, can't link
 // Zig). This scanner keeps its own scan by design, held to the shared corpus.
 

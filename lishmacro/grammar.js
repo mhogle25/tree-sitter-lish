@@ -9,7 +9,7 @@
  *
  * The scanner's job: starting after the closing `|` of a macro header, scan
  * forward until the next `|` at the top level (i.e. not inside a string).
- * This mirrors the boundary logic in `lish-zig/src/macro_parser.zig`.
+ * This mirrors the boundary logic in `lish/src/macro_parser.zig`.
  */
 
 const C = require('../common/constants');

@@ -1,6 +1,6 @@
 # tree-sitter-lish
 
-Two tree-sitter grammars for the [lish](https://github.com/mhogle25/lish-zig) language:
+Two tree-sitter grammars for the [lish](https://github.com/mhogle25/lish) language:
 
 - **`lish`** — single top-level expression. Used for `.lish` files (configs, scripts, single-expression payloads).
 - **`lishmacro`** — sequence of `|name params| body` macro definitions. Used for `.lishmacro` files.
@@ -16,7 +16,7 @@ tree-sitter-lish/
 ├── tree-sitter.json          # grammars array — declares both grammars
 ├── package.json              # npm scripts: generate, test
 ├── common/
-│   ├── constants.js          # GENERATED from lish-zig/src/token.zig (via sync.js)
+│   ├── constants.js          # GENERATED from lish/src/token.zig (via sync.js)
 │   ├── constants.h           # GENERATED — C form for external scanners
 │   ├── escapes.js            # GENERATED — string-escape symbol set
 │   └── define-grammar.js     # the lish expression grammar (used only by `lish/`)
@@ -32,7 +32,7 @@ tree-sitter-lish/
 │   │   └── injections.scm    # delegates `macro_body` content to the `lish` grammar
 │   └── test/corpus/*.txt
 ├── scripts/
-│   └── sync.js                 # vendors generated constants/escapes from lish-zig
+│   └── sync.js                 # vendors generated constants/escapes from lish
 └── test/
     └── scanner-corpus.test.js  # runs the shared boundary corpus vs the scanner
 ```
@@ -58,22 +58,22 @@ pnpm test                 # runs both grammars' corpus tests + the scanner corpu
 - **Closed / non-workspace files** that the LSP isn't managing
 - **Initial paint before LSP attaches**
 
-The two highlighters are kept aligned by sharing the lish-zig source-of-truth (see "Cross-language sync" below) and by using matching capture names — `tree-sitter-lish` emits the same tree-sitter standard captures (`@comment`, `@string`, `@number`, `@variable`, `@parameter`, `@operator`, `@function.call`, `@function.macro`) that map cleanly to the LSP token types lish-lsp produces.
+The two highlighters are kept aligned by sharing the lish source-of-truth (see "Cross-language sync" below) and by using matching capture names — `tree-sitter-lish` emits the same tree-sitter standard captures (`@comment`, `@string`, `@number`, `@variable`, `@parameter`, `@operator`, `@function.call`, `@function.macro`) that map cleanly to the LSP token types lish-lsp produces.
 
 ## Cross-language sync
 
 The character constants (`$`, `:`, `(`, `[`, `|`, `~`, ...) and the string-escape
-set have one source — `lish-zig/src/token.zig` — and are **generated**, not
+set have one source — `lish/src/token.zig` — and are **generated**, not
 hand-mirrored:
 
-1. `lish-zig/src/token.zig` — Zig source of truth (used by the lish parser, lexer, highlighter, REPL).
-2. `lish-zig` emits `constants.js`, `constants.h`, `escapes.js` via `zig build gen`.
-3. `scripts/sync.js` vendors those into `common/` (run automatically by the `pregenerate` / `postinstall` npm hooks; point it at a local lish-zig with `LISH_SOURCE` or `.lishsource.json`).
+1. `lish/src/token.zig` — Zig source of truth (used by the lish parser, lexer, highlighter, REPL).
+2. `lish` emits `constants.js`, `constants.h`, `escapes.js` via `zig build gen`.
+3. `scripts/sync.js` vendors those into `common/` (run automatically by the `pregenerate` / `postinstall` npm hooks; point it at a local lish with `LISH_SOURCE` or `.lishsource.json`).
 
 So `common/constants.{js,h}` and `common/escapes.js` carry a "DO NOT EDIT" header
 and can't drift — change `token.zig` and re-sync. The remaining hand-written
 lexical bits (the `number`/`identifier` regexes, the external scanner's string/
-comment skipping) are held to `lish-zig/src/scanner_corpus/` by
+comment skipping) are held to `lish/src/scanner_corpus/` by
 `test/scanner-corpus.test.js`.
 
 ## Editor integration
@@ -158,4 +158,4 @@ VS Code's tree-sitter integration is provided by extensions, not the editor core
 
 ## Status
 
-Early. The grammars handle every form in `lish-zig/src/stdlib.lishmacro` without errors and 23 corpus tests pass. As lish grows, this repo grows with it.
+Early. The grammars handle every form in `lish/src/stdlib.lishmacro` without errors and 23 corpus tests pass. As lish grows, this repo grows with it.

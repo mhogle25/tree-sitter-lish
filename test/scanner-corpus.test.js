@@ -2,8 +2,8 @@
 // Runs the shared scanner-boundary corpus against the tree-sitter lishmacro
 // external scanner.
 //
-// The corpus lives in ../lish-zig/src/scanner_corpus/ — same one consumed by
-// lish-zig's lexer test and folio's scanBraceContent test. See its README for
+// The corpus lives in ../lish/src/scanner_corpus/ — same one consumed by
+// lish's lexer test and folio's scanBraceContent test. See its README for
 // the file format and the contract every embedder is held to.
 //
 // For each `|` case, we shell out to `tree-sitter parse` against the lishmacro
@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
-const CORPUS_DIR = path.join(__dirname, '..', '..', 'lish-zig', 'src', 'scanner_corpus');
+const CORPUS_DIR = path.join(__dirname, '..', '..', 'lish', 'src', 'scanner_corpus');
 const TREE_SITTER = path.join(__dirname, '..', 'node_modules', '.bin', 'tree-sitter');
 const LISHMACRO_DIR = path.join(__dirname, '..', 'lishmacro');
 
