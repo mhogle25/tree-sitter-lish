@@ -12,10 +12,6 @@
           "named": true
         },
         {
-          "type": "deferred_param",
-          "named": true
-        },
-        {
           "type": "identifier",
           "named": true
         },
@@ -47,21 +43,6 @@
     }
   },
   {
-    "type": "deferred_param",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "expression",
     "named": true,
     "fields": {
@@ -71,10 +52,6 @@
         "types": [
           {
             "type": "block",
-            "named": true
-          },
-          {
-            "type": "deferred_param",
             "named": true
           },
           {
@@ -129,10 +106,6 @@
       "types": [
         {
           "type": "block",
-          "named": true
-        },
-        {
-          "type": "deferred_param",
           "named": true
         },
         {
@@ -308,10 +281,6 @@
   },
   {
     "type": "}",
-    "named": false
-  },
-  {
-    "type": "~",
     "named": false
   }
 ]

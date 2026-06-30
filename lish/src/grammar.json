@@ -77,10 +77,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "deferred_param"
-        },
-        {
-          "type": "SYMBOL",
           "name": "number"
         },
         {
@@ -169,19 +165,6 @@
         {
           "type": "STRING",
           "value": ":"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "identifier"
-        }
-      ]
-    },
-    "deferred_param": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "~"
         },
         {
           "type": "SYMBOL",
@@ -309,7 +292,7 @@
         "value": 1,
         "content": {
           "type": "PATTERN",
-          "value": "[^\\s()\\[\\]{}|\"':$~#]+"
+          "value": "[^\\s()\\[\\]{}\"':$;#]+"
         }
       }
     },

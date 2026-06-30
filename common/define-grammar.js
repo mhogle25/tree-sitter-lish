@@ -75,7 +75,6 @@ module.exports = function defineLishGrammar() {
                 $.block,
                 $.single_term_call,
                 $.scope_ref,
-                $.deferred_param,
                 $.number,
                 $.string,
                 $.identifier,
@@ -92,10 +91,6 @@ module.exports = function defineLishGrammar() {
 
             // :name — scope thunk; looks `name` up in the current scope.
             scope_ref: $ => seq(C.SCOPE_THUNK, $.identifier),
-
-            // ~name — deferred parameter marker, valid in macro parameter lists
-            // and in argument positions that forward laziness.
-            deferred_param: $ => seq(C.DEFERRED, $.identifier),
 
             // Numbers: integer or float, with optional leading minus glued to
             // the digits. `- 1` is two tokens (op then number); `-1` is one
@@ -135,9 +130,13 @@ module.exports = function defineLishGrammar() {
             ),
 
             // Identifier: any run of non-structural characters. Lish ops like
-            // `+`, `<=`, `??`, `is`, etc. all qualify. `#` is excluded so
-            // `##` can only start a comment, never an identifier.
-            identifier: $ => token(prec(1, /[^\s()\[\]{}|"':$~#]+/)),
+            // `+`, `<=`, `??`, `is`, and the bitwise `|`/`~`/`&`/`<<` etc. all
+            // qualify. In expression position `|` and `~` are ordinary operator
+            // chars (they are macro-header-only structure; see the lishmacro
+            // grammar). The base walls excluded here mirror token.zig's
+            // `isReservedChar`: `( ) [ ] { } : $ " ' ;`. `#` is excluded so `##`
+            // can only start a comment, never an identifier.
+            identifier: $ => token(prec(1, /[^\s()\[\]{}"':$;#]+/)),
 
             // Comment forms. Two shapes in lish:
             //   inline: `## stuff ##`  ends at the next `##` on the line

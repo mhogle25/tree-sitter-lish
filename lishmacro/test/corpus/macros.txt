@@ -2,7 +2,7 @@
 single macro definition
 ===================================
 
-|greet name| say (concat "hello, " :name)
+greet name | say (concat "hello, " :name) ;
 
 ---
 
@@ -16,8 +16,8 @@ single macro definition
 multiple macros on separate lines
 ===================================
 
-|double x| * :x 2
-|triple x| * :x 3
+double x | * :x 2 ;
+triple x | * :x 3 ;
 
 ---
 
@@ -35,7 +35,7 @@ multiple macros on separate lines
 macro with deferred parameter
 ===================================
 
-|defer ~body| body :body
+defer ~body | body :body ;
 
 ---
 
@@ -50,7 +50,7 @@ macro with deferred parameter
 zero-parameter macro
 ===================================
 
-|pi| proc 3.141592653589793
+pi | proc 3.141592653589793 ;
 
 ---
 
@@ -63,7 +63,7 @@ zero-parameter macro
 macro with multiple parameters
 ===================================
 
-|clamp v lo hi| min :hi (max :lo :v)
+clamp v lo hi | min :hi (max :lo :v) ;
 
 ---
 
@@ -76,11 +76,25 @@ macro with multiple parameters
     body: (macro_body)))
 
 ===================================
+final macro needs no terminator (EOF terminates the body)
+===================================
+
+double x | * :x 2
+
+---
+
+(source_file
+  (macro_definition
+    name: (identifier)
+    param: (identifier)
+    body: (macro_body)))
+
+===================================
 leading comment before the first macro
 ===================================
 
 ## the doubling macro
-|double x| * :x 2
+double x | * :x 2 ;
 
 ---
 
@@ -96,10 +110,10 @@ doc comments between macros surface as separate nodes
 ===================================
 
 ## the doubling macro
-|double x| * :x 2
+double x | * :x 2 ;
 
 ## the tripling macro
-|triple x| * :x 3
+triple x | * :x 3 ;
 
 ---
 
@@ -116,10 +130,25 @@ doc comments between macros surface as separate nodes
     body: (macro_body)))
 
 ===================================
-inline comment containing pipe stays inside the body
+bitwise pipe operator in the body is content, not a boundary
 ===================================
 
-|foo x| * :x ## use | here ## 2
+setbit n b | | :n (<< 1 :b) ;
+
+---
+
+(source_file
+  (macro_definition
+    name: (identifier)
+    param: (identifier)
+    param: (identifier)
+    body: (macro_body)))
+
+===================================
+inline comment containing a semicolon stays inside the body
+===================================
+
+foo x | * :x ## use ; here ## 2 ;
 
 ---
 
@@ -130,24 +159,25 @@ inline comment containing pipe stays inside the body
     body: (macro_body)))
 
 ===================================
-body containing a pipe character in a string
+body containing a semicolon in a string
 ===================================
 
-|sep| split "|" :s
+sep s | split ";" :s ;
 
 ---
 
 (source_file
   (macro_definition
     name: (identifier)
+    param: (identifier)
     body: (macro_body)))
 
 ===================================
 multi-line macro body
 ===================================
 
-|clamp v lo hi|
-   min :hi (max :lo :v)
+clamp v lo hi |
+   min :hi (max :lo :v) ;
 
 ---
 

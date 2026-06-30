@@ -3,9 +3,9 @@
 Two tree-sitter grammars for the [lish](https://github.com/mhogle25/lish) language:
 
 - **`lish`** — single top-level expression. Used for `.lish` files (configs, scripts, single-expression payloads).
-- **`lishmacro`** — sequence of `|name params| body` macro definitions. Used for `.lishmacro` files.
+- **`lishmacro`**: sequence of `name params | body ;` macro definitions. Used for `.lishmacro` files.
 
-The two grammars are deliberately decoupled. `lish` is the full expression grammar. `lishmacro` is a small wrapper grammar that recognizes only macro headers (`|name params|`), uses an **external scanner** to find the byte range of each macro's body, and relies on a **tree-sitter injection** to delegate body parsing to the `lish` grammar at the editor level.
+The two grammars are deliberately decoupled. `lish` is the full expression grammar. `lishmacro` is a small wrapper grammar that recognizes only macro headers (`name params |`), uses an **external scanner** to find the byte range of each macro's body (up to the `;` terminator), and relies on a **tree-sitter injection** to delegate body parsing to the `lish` grammar at the editor level.
 
 That setup means improvements to lish — new operators, new syntax — automatically benefit lishmacro highlighting without any change to `tree-sitter-lishmacro`. It also mirrors how `tree-sitter-folio` is designed to embed lish inside `{...}` regions.
 

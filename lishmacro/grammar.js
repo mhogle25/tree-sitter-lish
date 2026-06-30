@@ -1,15 +1,15 @@
 /**
  * tree-sitter grammar for `.lishmacro` files.
  *
- * Intentionally small: a `.lishmacro` file is a sequence of `|name params| body`
+ * Intentionally small: a `.lishmacro` file is a sequence of `name params | body ;`
  * declarations. The body is a lish expression — and rather than re-stating the
  * entire lish grammar here, we treat the body as an opaque `macro_body` token
  * recognized by the external scanner in `src/scanner.c`. A `queries/injections.scm`
  * tells the editor to re-parse `macro_body` content with the `lish` grammar.
  *
- * The scanner's job: starting after the closing `|` of a macro header, scan
- * forward until the next `|` at the top level (i.e. not inside a string).
- * This mirrors the boundary logic in `lish/src/macro_parser.zig`.
+ * The scanner's job: starting after the header/body `|` separator, scan forward
+ * until the body terminator `;` at the top level (i.e. not inside a string or
+ * comment) or EOF. This mirrors the boundary logic in `lish/src/macro_parser.zig`.
  */
 
 const C = require('../common/constants');
@@ -31,12 +31,13 @@ module.exports = grammar({
     rules: {
         source_file: $ => repeat1($.macro_definition),
 
+        // name params | body ; with the `;` terminator optional at EOF.
         macro_definition: $ => seq(
-            C.MACRO_BRACKET,
             field('name', $.identifier),
             repeat(field('param', $._macro_param)),
-            C.MACRO_BRACKET,
+            C.MACRO_SEPARATOR,
             field('body', $.macro_body),
+            optional(C.MACRO_BREAK),
         ),
 
         _macro_param: $ => choice(
@@ -44,12 +45,14 @@ module.exports = grammar({
             $.identifier,
         ),
 
-        // ~name — deferred parameter marker.
+        // ~name: deferred parameter marker (header-only; in a body `~` is the
+        // bitwise-NOT operator, handled by the lish grammar in the macro_body).
         deferred_param: $ => seq(C.DEFERRED, $.identifier),
 
-        // Identifier: any run of non-structural characters, excluding `#`
-        // (reserved for comment opener).
-        identifier: $ => token(prec(1, /[^\s()\[\]{}|"':$~#]+/)),
+        // Identifier: a header term. The header lexes in HEADER mode, where the
+        // walls are the base set plus `|` and `~` (token.zig isHeaderWall), so a
+        // header identifier excludes `( ) [ ] { } : $ " ' ; | ~` and `#`.
+        identifier: $ => token(prec(1, /[^\s()\[\]{}|"':$~;#]+/)),
 
         // Same comment rule as lish — see the explanation in common/define-grammar.js.
         comment: $ => token(/##([^\n#]|#[^\n#])*(##)?/),

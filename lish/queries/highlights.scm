@@ -32,12 +32,12 @@
 ; as an operator; the identifier takes the role-specific capture.
 (scope_ref        (identifier) @parameter)
 (single_term_call (identifier) @function)
-(deferred_param   (identifier) @parameter)
 
-; Sigil characters.
+; Sigil characters. In expression position `~` and `|` are ordinary operator
+; identifiers (the bitwise ops), captured as @function.call via the operation
+; slot above, not as sigils; only `:` and `$` are structural sigils here.
 ":" @operator
 "$" @operator
-"~" @operator
 
 ; Bracket punctuation.
 "(" @punctuation.bracket

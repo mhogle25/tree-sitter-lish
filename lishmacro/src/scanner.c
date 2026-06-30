@@ -1,11 +1,12 @@
 // External scanner for the lishmacro grammar.
 //
-// Recognizes one external token: `macro_body`. Starting after the closing `|`
-// of a macro header, advances through arbitrary content until the next
-// top-level `|` (i.e. not inside a string or comment) or EOF.
+// Recognizes one external token: `macro_body`. Starting after the header/body
+// `|` separator, advances through arbitrary content until the top-level body
+// terminator `;` (i.e. not inside a string or comment) or EOF. A `|` inside the
+// body is ordinary content (the bitwise-OR operator), not a boundary.
 //
 // Mirrors the boundary logic in lish/src/macro_parser.zig's
-// `parseFromLexer(..., stop_at: &.{.macro_bracket})` and the comment/string
+// `parseFromLexer(..., stop_at: &.{.macro_break})` and the comment/string
 // handling in lish/src/lexer.zig. All the lish-specific lexical knowledge
 // (what's a string, what's a comment, where escape sequences are) lives in
 // common/scanner_helpers.h — this file just composes those primitives with
@@ -57,12 +58,12 @@ bool tree_sitter_lishmacro_external_scanner_scan(
         lexer->advance(lexer, true);
     }
 
-    if (lexer->eof(lexer) || lexer->lookahead == LISH_MACRO_BRACKET) {
+    if (lexer->eof(lexer) || lexer->lookahead == LISH_MACRO_BREAK) {
         return false;
     }
 
     bool consumed_any = false;
-    while (!lexer->eof(lexer) && lexer->lookahead != LISH_MACRO_BRACKET) {
+    while (!lexer->eof(lexer) && lexer->lookahead != LISH_MACRO_BREAK) {
         int32_t c = lexer->lookahead;
 
         if (c == LISH_QUOTE_DOUBLE || c == LISH_QUOTE_SINGLE) {

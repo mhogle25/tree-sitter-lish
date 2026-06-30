@@ -84,3 +84,42 @@ float literals
     operation: (identifier)
     argument: (number)
     argument: (number)))
+
+===================================
+bitwise pipe operator in expression position
+===================================
+
+| 12 10
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (number)
+    argument: (number)))
+
+===================================
+bitwise not operator glued and spaced
+===================================
+
+~ 5
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)
+    argument: (number)))
+
+===================================
+tilde glued to a term is one identifier
+===================================
+
+~5
+
+---
+
+(source_file
+  (expression
+    operation: (identifier)))

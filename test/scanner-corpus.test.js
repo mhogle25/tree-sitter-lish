@@ -6,7 +6,7 @@
 // lish's lexer test and folio's scanBraceContent test. See its README for
 // the file format and the contract every embedder is held to.
 //
-// For each `|` case, we shell out to `tree-sitter parse` against the lishmacro
+// For each `;` case, we shell out to `tree-sitter parse` against the lishmacro
 // grammar, extract the macro_body node's end position from the S-expression
 // output, convert that line/col to a byte offset, and assert it equals the
 // declared boundary. The `}` cases are not exercised here — they belong to
@@ -90,28 +90,31 @@ function fail(message) {
 
 const files = fs.readdirSync(CORPUS_DIR).filter(f => f.endsWith('.case')).sort();
 const errors = [];
-let pipeCount = 0;
+let caseCount = 0;
 
-// Each case's source is RAW body content (no surrounding `|name|` header). To
-// run it through tree-sitter-lishmacro we synthesize a wrapper:
+// Each case's source is RAW body content ending at a `;` terminator (no
+// surrounding header). To run it through tree-sitter-lishmacro we synthesize a
+// wrapper:
 //
-//     |x|<source>|body
+//     x |<source>| b ;
 //
-// The leading `|x|` makes the case's content the body of a first macro. The
-// trailing `|body` completes a second macro definition using whatever follows
-// the boundary `|` in the corpus source as its name; this keeps tree-sitter
+// The leading `x |` makes the case's content the body of a first macro. The
+// trailing `| b ;` completes a second macro definition using whatever follows
+// the boundary `;` in the corpus source as its name; this keeps tree-sitter
 // from producing a top-level ERROR node that swallows the partial tree.
 //
 // The first macro_body's end position in the synthesized parse, minus the
-// prefix length, gives us the boundary within the original source.
-const WRAPPER_PREFIX = '|x|';
-const WRAPPER_SUFFIX = '|body';
+// prefix length, gives us the boundary within the original source. The prefix
+// is 3 bytes (`x |`) so the source still starts at offset 3, as it did under
+// the old `|x|` wrapper.
+const WRAPPER_PREFIX = 'x |';
+const WRAPPER_SUFFIX = '| b ;';
 
 for (const filename of files) {
     const text = fs.readFileSync(path.join(CORPUS_DIR, filename), 'utf8');
     const c = parseCase(text);
-    if (c.terminator !== '|') continue;
-    pipeCount += 1;
+    if (c.terminator !== ';') continue;
+    caseCount += 1;
 
     const synth = WRAPPER_PREFIX + c.source + WRAPPER_SUFFIX;
     const output = parseWithLishmacro(synth);
@@ -135,6 +138,6 @@ for (const filename of files) {
 }
 
 if (errors.length > 0) fail('\n  ' + errors.join('\n  '));
-if (pipeCount === 0) fail('no `|` cases found in corpus — did the path move?');
+if (caseCount === 0) fail('no `;` cases found in corpus; did the path move?');
 
-console.log(`scanner-corpus OK (${pipeCount} cases verified)`);
+console.log(`scanner-corpus OK (${caseCount} cases verified)`);
