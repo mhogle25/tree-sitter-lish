@@ -158,4 +158,4 @@ VS Code's tree-sitter integration is provided by extensions, not the editor core
 
 ## Status
 
-Early. The grammars handle every form in `lish/src/stdlib.lishmacro` without errors and 23 corpus tests pass. As lish grows, this repo grows with it.
+Early. The grammars handle every form in `lish/src/stdlib.lishmacro` without errors and 32 corpus tests pass. As lish grows, this repo grows with it.
